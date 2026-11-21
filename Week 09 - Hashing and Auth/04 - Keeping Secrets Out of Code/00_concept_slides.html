@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Topic 4 · Keeping Secrets Out of Code</title>
+<style>
+:root{--bg:#f1f3f7;--card:#fff;--ink:#1c2230;--muted:#5d667a;--line:#9aa3b5;
+--nfill:#eef1f7;--nstroke:#aab3c5;--acc:#2563eb;--accf:#dbe7ff;
+--good:#15803d;--goodf:#dcf5e3;--bad:#c62828;--badf:#fde3e3;--warn:#b45309;--warnf:#fdecc8;}
+@media (prefers-color-scheme:dark){:root{--bg:#0f131b;--card:#181e2a;--ink:#e8ecf4;--muted:#9aa5bb;--line:#6b768d;
+--nfill:#222a3a;--nstroke:#44506a;--acc:#6ea0ff;--accf:#1d2f58;
+--good:#4ade80;--goodf:#143524;--bad:#ff7b7b;--badf:#431c1c;--warn:#fbbf24;--warnf:#43330f;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
+.slide{background:var(--card);border:1px solid var(--nstroke);border-radius:16px;margin:0 0 24px;padding:8px;
+box-shadow:0 2px 10px rgba(0,0,0,.06)}
+svg{display:block;width:100%;height:auto}
+.t{font-size:20px;fill:var(--ink)} .tm{font-size:17px;fill:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace}
+.h{font-size:32px;font-weight:700;fill:var(--ink)} .sub{font-size:19px;fill:var(--muted)}
+.cap{font-size:16px;fill:var(--muted)} .lbl{font-size:15px;font-weight:700;fill:var(--muted);letter-spacing:.06em}
+.b{stroke-width:2} .n{fill:var(--nfill);stroke:var(--nstroke)} .acc{fill:var(--accf);stroke:var(--acc)}
+.good{fill:var(--goodf);stroke:var(--good)} .bad{fill:var(--badf);stroke:var(--bad)} .warn{fill:var(--warnf);stroke:var(--warn)}
+.ln{fill:none;stroke-width:3;stroke-linecap:round} .ln.a{stroke:var(--acc)} .ln.good{stroke:var(--good)} .ln.bad{stroke:var(--bad)} .ln.m{stroke:var(--line)}
+.g{fill:var(--good)} .r{fill:var(--bad)} .w{fill:var(--warn)} .ac{fill:var(--acc)} .bold{font-weight:700}
+.hint{text-align:center;color:var(--muted);font-size:14px;margin:0 0 16px}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs id="defs">
+<marker id="ara" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acc)"/></marker>
+<marker id="argood" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--good)"/></marker>
+<marker id="arbad" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--bad)"/></marker>
+<marker id="arm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker>
+</defs></svg>
+<main><p class="hint">Topic 4 · Keeping Secrets Out of Code — concept slides to look at before the walkthrough</p>
+
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="1 · A hard-coded secret is a leak waiting to happen">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">1 · A hard-coded secret is a leak waiting to happen</text>
+<text x="40" y="86" class="sub" text-anchor="start">Git remembers every commit. Once pushed, the key is compromised for good.</text>
+<text x="40" y="125" class="lbl" text-anchor="start">git history (every commit is kept forever)</text><line x1="60" y1="260" x2="900" y2="260" class="ln m"/><circle cx="100" cy="260" r="16" class="b n"/><text x="100" y="190" class="t bold" text-anchor="middle" style="font-size:17px">commit 1</text><text x="100" y="216" class="cap" text-anchor="middle" style="font-size:14px">start project</text><circle cx="320" cy="260" r="16" class="b bad"/><text x="320" y="190" class="t bold" text-anchor="middle" style="font-size:17px">commit 2</text><text x="320" y="216" class="cap" text-anchor="middle" style="font-size:14px">API_KEY = &quot;sk-live-9f3…&quot;</text><circle cx="540" cy="260" r="16" class="b warn"/><text x="540" y="190" class="t bold" text-anchor="middle" style="font-size:17px">commit 3</text><text x="540" y="216" class="cap" text-anchor="middle" style="font-size:14px">delete the key</text><circle cx="760" cy="260" r="16" class="b n"/><text x="760" y="190" class="t bold" text-anchor="middle" style="font-size:17px">commit 4</text><text x="760" y="216" class="cap" text-anchor="middle" style="font-size:14px">more work</text><rect x="150" y="340" width="340" height="80" rx="12" class="b bad"/><text x="320.0" y="374.6" class="tm" text-anchor="middle" style="font-size:16px">Anyone can still run</text><text x="320.0" y="396.6" class="tm" text-anchor="middle" style="font-size:16px">git show &lt;commit 2&gt;</text><line x1="320" y1="338" x2="320" y2="284" class="ln bad" marker-end="url(#arbad)"/><text x="40" y="460" class="t bold r" text-anchor="start">Deleting it from the latest commit does NOT un-leak it.</text><text x="40" y="490" class="t" text-anchor="start">Pushed to a public repo = assume it was copied within minutes.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">1 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="2 · Environment variables">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">2 · Environment variables</text>
+<text x="40" y="86" class="sub" text-anchor="start">The code asks the environment for the secret. The value never enters the repository.</text>
+<text x="40" y="125" class="lbl" text-anchor="start">BAD — secret lives in the code</text><rect x="40" y="140" width="400" height="90" rx="12" class="b bad"/><text x="240.0" y="190.95" class="tm" text-anchor="middle" style="font-size:17px">API_KEY = &quot;sk-live-9f3…&quot;</text><line x1="445" y1="185" x2="520" y2="185" class="ln bad" marker-end="url(#arbad)"/><rect x="525" y="150" width="180" height="70" rx="12" class="b n"/><text x="615.0" y="191.3" class="t" text-anchor="middle" style="font-size:18px">git push</text><line x1="710" y1="185" x2="760" y2="185" class="ln bad" marker-end="url(#arbad)"/><rect x="765" y="145" width="155" height="80" rx="12" class="b bad"/><text x="842.5" y="179.45" class="t" text-anchor="middle" style="font-size:17px">public</text><text x="842.5" y="202.45" class="t" text-anchor="middle" style="font-size:17px">GitHub 🌍</text><text x="40" y="290" class="lbl" text-anchor="start">GOOD — secret lives outside the code</text><rect x="40" y="305" width="190" height="70" rx="12" class="b good"/><text x="135.0" y="334.75" class="tm" text-anchor="middle" style="font-size:15px">your machine</text><text x="135.0" y="355.75" class="tm" text-anchor="middle" style="font-size:15px">API_KEY=sk-…</text><line x1="235" y1="340" x2="290" y2="340" class="ln good" marker-end="url(#argood)"/><rect x="295" y="305" width="245" height="70" rx="12" class="b acc"/><text x="417.5" y="344.9" class="tm" text-anchor="middle" style="font-size:14px">os.environ.get(&quot;API_KEY&quot;)</text><text x="555" y="332" class="t" text-anchor="start" style="font-size:17px">code holds the NAME,</text><text x="555" y="358" class="t" text-anchor="start" style="font-size:17px">never the value</text><rect x="765" y="305" width="155" height="70" rx="12" class="b good"/><text x="842.5" y="334.6" class="t" text-anchor="middle" style="font-size:16px">git push</text><text x="842.5" y="356.6" class="t" text-anchor="middle" style="font-size:16px">(no secret)</text><rect x="40" y="410" width="880" height="80" rx="12" class="b n"/><text x="480.0" y="457.0" class="t" text-anchor="middle"></text><text x="60" y="443" class="tm" text-anchor="start" style="font-size:17px">key = os.environ.get(&quot;API_KEY&quot;)</text><text x="60" y="472" class="tm" text-anchor="start" style="font-size:15px">if key is None: raise RuntimeError(&quot;API_KEY is not set&quot;)   # clear error, not a confusing crash</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">2 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="3 · .gitignore: decide what never leaves your machine">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">3 · .gitignore: decide what never leaves your machine</text>
+<text x="40" y="86" class="sub" text-anchor="start">Real user hashes, keys and caches stay local. Only code and sample data are shared.</text>
+<text x="40" y="125" class="lbl" text-anchor="start">your project folder</text><rect x="40" y="140" width="270" height="42" rx="12" class="b good"/><text x="175.0" y="166.6" class="tm" text-anchor="middle" style="font-size:16px">auth.py</text><rect x="40" y="192" width="270" height="42" rx="12" class="b good"/><text x="175.0" y="218.6" class="tm" text-anchor="middle" style="font-size:16px">fetch_data.py</text><rect x="40" y="244" width="270" height="42" rx="12" class="b good"/><text x="175.0" y="270.6" class="tm" text-anchor="middle" style="font-size:16px">DATA/raw.csv</text><rect x="40" y="296" width="270" height="42" rx="12" class="b bad"/><text x="175.0" y="322.6" class="tm" text-anchor="middle" style="font-size:16px">DATA/users.txt</text><rect x="40" y="348" width="270" height="42" rx="12" class="b bad"/><text x="175.0" y="374.6" class="tm" text-anchor="middle" style="font-size:16px">.env</text><rect x="40" y="400" width="270" height="42" rx="12" class="b bad"/><text x="175.0" y="426.6" class="tm" text-anchor="middle" style="font-size:16px">__pycache__/</text><line x1="315" y1="161" x2="470" y2="215" class="ln good" marker-end="url(#argood)"/><line x1="315" y1="213" x2="470" y2="215" class="ln good" marker-end="url(#argood)"/><line x1="315" y1="265" x2="470" y2="215" class="ln good" marker-end="url(#argood)"/><line x1="315" y1="317" x2="470" y2="375" class="ln bad" marker-end="url(#arbad)"/><line x1="315" y1="369" x2="470" y2="375" class="ln bad" marker-end="url(#arbad)"/><line x1="315" y1="421" x2="470" y2="375" class="ln bad" marker-end="url(#arbad)"/><rect x="475" y="180" width="200" height="70" rx="12" class="b good"/><text x="575.0" y="209.3" class="t" text-anchor="middle" style="font-size:18px">Git / GitHub</text><text x="575.0" y="233.3" class="t" text-anchor="middle" style="font-size:18px">✔ shared</text><rect x="475" y="340" width="200" height="70" rx="12" class="b bad"/><text x="575.0" y="369.3" class="t" text-anchor="middle" style="font-size:18px">.gitignore</text><text x="575.0" y="393.3" class="t" text-anchor="middle" style="font-size:18px">✘ never sent</text><rect x="710" y="150" width="210" height="190" rx="12" class="b n"/><text x="724" y="178" class="lbl" text-anchor="start">.gitignore</text><text x="724" y="212" class="tm" text-anchor="start" style="font-size:16px">DATA/users.txt</text><text x="724" y="244" class="tm" text-anchor="start" style="font-size:16px">.env</text><text x="724" y="276" class="tm" text-anchor="start" style="font-size:16px">__pycache__/</text><text x="724" y="308" class="tm" text-anchor="start" style="font-size:16px">*.db</text><text x="40" y="480" class="t bold" text-anchor="start" style="font-size:18px">Add it BEFORE the first commit. Already tracked? git rm --cached &lt;file&gt; as well.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">3 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="4 · If a secret leaks anyway">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">4 · If a secret leaks anyway</text>
+<text x="40" y="86" class="sub" text-anchor="start">Make the leaked key worthless first; worry about git history second.</text>
+<rect x="40" y="140" width="280" height="190" rx="14" class="b bad"/><circle cx="80" cy="185" r="22" class="b n"/><text x="80" y="193" class="t bold" text-anchor="middle" style="font-size:22px">1</text><text x="118" y="193" class="t bold" text-anchor="start" style="font-size:26px">REVOKE</text><text x="60" y="250" class="t" text-anchor="start" style="font-size:18px">Disable the key at the</text><text x="60" y="278" class="t" text-anchor="start" style="font-size:18px">provider (dashboard) NOW</text><line x1="323" y1="235" x2="337" y2="235" class="ln m" marker-end="url(#arm)"/><rect x="340" y="140" width="280" height="190" rx="14" class="b warn"/><circle cx="380" cy="185" r="22" class="b n"/><text x="380" y="193" class="t bold" text-anchor="middle" style="font-size:22px">2</text><text x="418" y="193" class="t bold" text-anchor="start" style="font-size:26px">REPLACE</text><text x="360" y="250" class="t" text-anchor="start" style="font-size:18px">Generate a new key,</text><text x="360" y="278" class="t" text-anchor="start" style="font-size:18px">put it in an env variable</text><line x1="623" y1="235" x2="637" y2="235" class="ln m" marker-end="url(#arm)"/><rect x="640" y="140" width="280" height="190" rx="14" class="b good"/><circle cx="680" cy="185" r="22" class="b n"/><text x="680" y="193" class="t bold" text-anchor="middle" style="font-size:22px">3</text><text x="718" y="193" class="t bold" text-anchor="start" style="font-size:26px">CLEAN</text><text x="660" y="250" class="t" text-anchor="start" style="font-size:18px">Then tidy git history</text><text x="660" y="278" class="t" text-anchor="start" style="font-size:18px">(least urgent)</text><rect x="40" y="370" width="880" height="110" rx="12" class="b n"/><text x="480.0" y="432.0" class="t" text-anchor="middle"></text><text x="60" y="408" class="lbl" text-anchor="start">Why this order?</text><text x="60" y="440" class="t" text-anchor="start">A revoked key is useless to anyone who copied it. Cleaning history only hides it</text><text x="60" y="468" class="t" text-anchor="start">after the fact — the copy may already exist elsewhere.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">4 / 4</text>
+</svg>
+</section>
+</main></body></html>

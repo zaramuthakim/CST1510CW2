@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Topic 3 · Register and Login</title>
+<style>
+:root{--bg:#f1f3f7;--card:#fff;--ink:#1c2230;--muted:#5d667a;--line:#9aa3b5;
+--nfill:#eef1f7;--nstroke:#aab3c5;--acc:#2563eb;--accf:#dbe7ff;
+--good:#15803d;--goodf:#dcf5e3;--bad:#c62828;--badf:#fde3e3;--warn:#b45309;--warnf:#fdecc8;}
+@media (prefers-color-scheme:dark){:root{--bg:#0f131b;--card:#181e2a;--ink:#e8ecf4;--muted:#9aa5bb;--line:#6b768d;
+--nfill:#222a3a;--nstroke:#44506a;--acc:#6ea0ff;--accf:#1d2f58;
+--good:#4ade80;--goodf:#143524;--bad:#ff7b7b;--badf:#431c1c;--warn:#fbbf24;--warnf:#43330f;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
+.slide{background:var(--card);border:1px solid var(--nstroke);border-radius:16px;margin:0 0 24px;padding:8px;
+box-shadow:0 2px 10px rgba(0,0,0,.06)}
+svg{display:block;width:100%;height:auto}
+.t{font-size:20px;fill:var(--ink)} .tm{font-size:17px;fill:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace}
+.h{font-size:32px;font-weight:700;fill:var(--ink)} .sub{font-size:19px;fill:var(--muted)}
+.cap{font-size:16px;fill:var(--muted)} .lbl{font-size:15px;font-weight:700;fill:var(--muted);letter-spacing:.06em}
+.b{stroke-width:2} .n{fill:var(--nfill);stroke:var(--nstroke)} .acc{fill:var(--accf);stroke:var(--acc)}
+.good{fill:var(--goodf);stroke:var(--good)} .bad{fill:var(--badf);stroke:var(--bad)} .warn{fill:var(--warnf);stroke:var(--warn)}
+.ln{fill:none;stroke-width:3;stroke-linecap:round} .ln.a{stroke:var(--acc)} .ln.good{stroke:var(--good)} .ln.bad{stroke:var(--bad)} .ln.m{stroke:var(--line)}
+.g{fill:var(--good)} .r{fill:var(--bad)} .w{fill:var(--warn)} .ac{fill:var(--acc)} .bold{font-weight:700}
+.hint{text-align:center;color:var(--muted);font-size:14px;margin:0 0 16px}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs id="defs">
+<marker id="ara" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acc)"/></marker>
+<marker id="argood" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--good)"/></marker>
+<marker id="arbad" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--bad)"/></marker>
+<marker id="arm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker>
+</defs></svg>
+<main><p class="hint">Topic 3 · Register and Login — concept slides to look at before the walkthrough</p>
+
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="1 · Registering a user">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">1 · Registering a user</text>
+<text x="40" y="86" class="sub" text-anchor="start">Check the rules, then hash, then append one line to the file.</text>
+<rect x="40" y="150" width="160" height="90" rx="12" class="b n"/><text x="120.0" y="189.3" class="t" text-anchor="middle" style="font-size:18px">username +</text><text x="120.0" y="213.3" class="t" text-anchor="middle" style="font-size:18px">password</text><line x1="203" y1="195" x2="217" y2="195" class="ln a" marker-end="url(#ara)"/><rect x="220" y="150" width="160" height="90" rx="12" class="b warn"/><text x="300.0" y="189.3" class="t" text-anchor="middle" style="font-size:18px">username</text><text x="300.0" y="213.3" class="t" text-anchor="middle" style="font-size:18px">taken?</text><line x1="383" y1="195" x2="397" y2="195" class="ln a" marker-end="url(#ara)"/><rect x="400" y="150" width="160" height="90" rx="12" class="b warn"/><text x="480.0" y="189.3" class="t" text-anchor="middle" style="font-size:18px">password</text><text x="480.0" y="213.3" class="t" text-anchor="middle" style="font-size:18px">≥ 8 chars?</text><line x1="563" y1="195" x2="577" y2="195" class="ln a" marker-end="url(#ara)"/><rect x="580" y="150" width="160" height="90" rx="12" class="b acc"/><text x="660.0" y="189.3" class="t" text-anchor="middle" style="font-size:18px">hash with</text><text x="660.0" y="213.3" class="t" text-anchor="middle" style="font-size:18px">bcrypt</text><line x1="743" y1="195" x2="757" y2="195" class="ln a" marker-end="url(#ara)"/><rect x="760" y="150" width="160" height="90" rx="12" class="b n"/><text x="840.0" y="189.3" class="t" text-anchor="middle" style="font-size:18px">append line</text><text x="840.0" y="213.3" class="t" text-anchor="middle" style="font-size:18px">to users.txt</text><line x1="300" y1="245" x2="300" y2="300" class="ln bad" marker-end="url(#arbad)"/><rect x="220" y="305" width="160" height="60" rx="12" class="b bad"/><text x="300.0" y="340.25" class="t" text-anchor="middle" style="font-size:15px">(False, “taken”)</text><line x1="480" y1="245" x2="480" y2="300" class="ln bad" marker-end="url(#arbad)"/><rect x="400" y="305" width="160" height="60" rx="12" class="b bad"/><text x="480.0" y="340.25" class="t" text-anchor="middle" style="font-size:15px">(False, “too short”)</text><line x1="840" y1="245" x2="840" y2="300" class="ln good" marker-end="url(#argood)"/><rect x="760" y="305" width="160" height="60" rx="12" class="b good"/><text x="840.0" y="340.25" class="t" text-anchor="middle" style="font-size:15px">(True, “Registered.”)</text><text x="40" y="410" class="t bold" text-anchor="start">Validate first → hash → write. Refuse early, before anything touches the file.</text><text x="40" y="440" class="t" text-anchor="start">Never store or print the plain password — only the hash goes to disk.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">1 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="2 · How a user is stored">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">2 · How a user is stored</text>
+<text x="40" y="86" class="sub" text-anchor="start">A plain text file. One line per person: username, comma, bcrypt hash.</text>
+<rect x="40" y="130" width="880" height="150" rx="12" class="b n"/><text x="60" y="160" class="lbl" text-anchor="start">DATA/users.txt</text><text x="60" y="195" class="tm" text-anchor="start" style="font-size:15px">anna,$2b$12$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy</text><text x="60" y="229" class="tm" text-anchor="start" style="font-size:15px">ben,$2b$12$Zp3WkE0c2ZtHqfAaN1u5Oe7yTjKm9QxVb8LrDs4HnGcYiPwUoXeS2</text><text x="60" y="263" class="cap" text-anchor="start">one line per user  =  username , hash</text><text x="40" y="330" class="tm" text-anchor="start" style="font-size:22px">line.strip().split(&quot;,&quot;, 1)</text><rect x="40" y="350" width="270" height="70" rx="12" class="b good"/><text x="175.0" y="390.95" class="tm" text-anchor="middle" style="font-size:17px">username = &quot;anna&quot;</text><rect x="330" y="350" width="590" height="70" rx="12" class="b good"/><text x="625.0" y="390.95" class="tm" text-anchor="middle" style="font-size:17px">hash = &quot;$2b$12$N9qo…&quot;</text><text x="40" y="460" class="t bold" text-anchor="start">maxsplit = 1  →  split only at the FIRST comma, so the rest of the line stays whole.</text><text x="40" y="488" class="cap" text-anchor="start">(Plain .split(&quot;,&quot;) breaks the moment a value contains another comma.)</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">2 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="3 · Logging in">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">3 · Logging in</text>
+<text x="40" y="86" class="sub" text-anchor="start">Find the line, then let checkpw() decide. Every failure path returns False.</text>
+<rect x="40" y="150" width="150" height="80" rx="12" class="b n"/><text x="115.0" y="184.45" class="t" text-anchor="middle" style="font-size:17px">login(user,</text><text x="115.0" y="207.45" class="t" text-anchor="middle" style="font-size:17px">password)</text><line x1="193" y1="190" x2="235" y2="190" class="ln a" marker-end="url(#ara)"/><rect x="240" y="140" width="170" height="100" rx="12" class="b warn"/><text x="325.0" y="184.3" class="t" text-anchor="middle" style="font-size:18px">users.txt</text><text x="325.0" y="208.3" class="t" text-anchor="middle" style="font-size:18px">exists?</text><line x1="325" y1="245" x2="325" y2="300" class="ln bad" marker-end="url(#arbad)"/><text x="335" y="280" class="cap" text-anchor="start" style="font-size:15px">no</text><rect x="250" y="305" width="150" height="60" rx="12" class="b bad"/><text x="325.0" y="340.95" class="t" text-anchor="middle" style="font-size:17px">return False</text><line x1="413" y1="190" x2="455" y2="190" class="ln good" marker-end="url(#argood)"/><text x="420" y="178" class="cap" text-anchor="start" style="font-size:15px">yes</text><rect x="460" y="140" width="170" height="100" rx="12" class="b n"/><text x="545.0" y="184.3" class="t" text-anchor="middle" style="font-size:18px">find the line</text><text x="545.0" y="208.3" class="t" text-anchor="middle" style="font-size:18px">for this user</text><line x1="545" y1="245" x2="545" y2="300" class="ln bad" marker-end="url(#arbad)"/><text x="555" y="280" class="cap" text-anchor="start" style="font-size:15px">none</text><rect x="470" y="305" width="150" height="60" rx="12" class="b bad"/><text x="545.0" y="340.95" class="t" text-anchor="middle" style="font-size:17px">return False</text><line x1="633" y1="190" x2="675" y2="190" class="ln good" marker-end="url(#argood)"/><rect x="680" y="140" width="240" height="100" rx="12" class="b acc"/><text x="800.0" y="184.45" class="t" text-anchor="middle" style="font-size:17px">bcrypt.checkpw</text><text x="800.0" y="207.45" class="t" text-anchor="middle" style="font-size:17px">(password, stored hash)</text><line x1="755" y1="245" x2="755" y2="300" class="ln bad" marker-end="url(#arbad)"/><rect x="680" y="305" width="110" height="60" rx="12" class="b bad"/><text x="735.0" y="340.95" class="t" text-anchor="middle" style="font-size:17px">False</text><line x1="845" y1="245" x2="845" y2="300" class="ln good" marker-end="url(#argood)"/><rect x="800" y="305" width="120" height="60" rx="12" class="b good"/><text x="860.0" y="340.95" class="t" text-anchor="middle" style="font-size:17px">True</text><text x="40" y="420" class="t bold" text-anchor="start">Three ways to say “no”, one way to say “yes”.</text><text x="40" y="450" class="t" text-anchor="start">A missing file or unknown user must return False cleanly — never crash.</text><text x="40" y="478" class="cap" text-anchor="start">Same message for “no such user” and “wrong password” leaks less to attackers.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">3 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="4 · Return a flag and a message">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">4 · Return a flag and a message</text>
+<text x="40" y="86" class="sub" text-anchor="start">Two small values let the caller both branch on success and tell the user why.</text>
+<rect x="40" y="140" width="260" height="90" rx="12" class="b n"/><text x="170.0" y="179.75" class="tm" text-anchor="middle" style="font-size:15px">register_user(</text><text x="170.0" y="200.75" class="tm" text-anchor="middle" style="font-size:15px">&quot;anna&quot;, &quot;longenough1&quot;)</text><line x1="305" y1="185" x2="385" y2="185" class="ln a" marker-end="url(#ara)"/><rect x="390" y="140" width="250" height="90" rx="12" class="b acc"/><text x="515.0" y="179.3" class="t" text-anchor="middle" style="font-size:18px">returns TWO values</text><text x="515.0" y="203.3" class="t" text-anchor="middle" style="font-size:18px">(flag, message)</text><line x1="645" y1="170" x2="715" y2="140" class="ln good" marker-end="url(#argood)"/><line x1="645" y1="200" x2="715" y2="235" class="ln bad" marker-end="url(#arbad)"/><rect x="720" y="110" width="200" height="70" rx="12" class="b good"/><text x="820.0" y="139.45" class="t" text-anchor="middle" style="font-size:17px">True</text><text x="820.0" y="162.45" class="t" text-anchor="middle" style="font-size:17px">“Registered.”</text><rect x="720" y="205" width="200" height="70" rx="12" class="b bad"/><text x="820.0" y="234.75" class="t" text-anchor="middle" style="font-size:15px">False</text><text x="820.0" y="255.75" class="t" text-anchor="middle" style="font-size:15px">“That username is taken.”</text><rect x="40" y="300" width="880" height="205" rx="12" class="b n"/><text x="480.0" y="409.5" class="t" text-anchor="middle"></text><text x="60" y="340" class="tm" text-anchor="start" style="font-size:18px">ok, message = register_user(...)</text><text x="60" y="375" class="tm" text-anchor="start" style="font-size:18px">if ok:  print(&quot;Success:&quot;, message)</text><text x="60" y="405" class="tm" text-anchor="start" style="font-size:18px">else:   print(&quot;Refused:&quot;, message)</text><text x="60" y="455" class="t bold" text-anchor="start">The flag lets the program DECIDE; the message lets the user UNDERSTAND.</text><text x="60" y="485" class="cap" text-anchor="start" style="font-size:15px">Week 11: Streamlit shows the message in green or red depending on the flag.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">4 / 4</text>
+</svg>
+</section>
+</main></body></html>

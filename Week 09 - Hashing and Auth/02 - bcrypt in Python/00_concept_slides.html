@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Topic 2 · bcrypt in Python</title>
+<style>
+:root{--bg:#f1f3f7;--card:#fff;--ink:#1c2230;--muted:#5d667a;--line:#9aa3b5;
+--nfill:#eef1f7;--nstroke:#aab3c5;--acc:#2563eb;--accf:#dbe7ff;
+--good:#15803d;--goodf:#dcf5e3;--bad:#c62828;--badf:#fde3e3;--warn:#b45309;--warnf:#fdecc8;}
+@media (prefers-color-scheme:dark){:root{--bg:#0f131b;--card:#181e2a;--ink:#e8ecf4;--muted:#9aa5bb;--line:#6b768d;
+--nfill:#222a3a;--nstroke:#44506a;--acc:#6ea0ff;--accf:#1d2f58;
+--good:#4ade80;--goodf:#143524;--bad:#ff7b7b;--badf:#431c1c;--warn:#fbbf24;--warnf:#43330f;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
+.slide{background:var(--card);border:1px solid var(--nstroke);border-radius:16px;margin:0 0 24px;padding:8px;
+box-shadow:0 2px 10px rgba(0,0,0,.06)}
+svg{display:block;width:100%;height:auto}
+.t{font-size:20px;fill:var(--ink)} .tm{font-size:17px;fill:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace}
+.h{font-size:32px;font-weight:700;fill:var(--ink)} .sub{font-size:19px;fill:var(--muted)}
+.cap{font-size:16px;fill:var(--muted)} .lbl{font-size:15px;font-weight:700;fill:var(--muted);letter-spacing:.06em}
+.b{stroke-width:2} .n{fill:var(--nfill);stroke:var(--nstroke)} .acc{fill:var(--accf);stroke:var(--acc)}
+.good{fill:var(--goodf);stroke:var(--good)} .bad{fill:var(--badf);stroke:var(--bad)} .warn{fill:var(--warnf);stroke:var(--warn)}
+.ln{fill:none;stroke-width:3;stroke-linecap:round} .ln.a{stroke:var(--acc)} .ln.good{stroke:var(--good)} .ln.bad{stroke:var(--bad)} .ln.m{stroke:var(--line)}
+.g{fill:var(--good)} .r{fill:var(--bad)} .w{fill:var(--warn)} .ac{fill:var(--acc)} .bold{font-weight:700}
+.hint{text-align:center;color:var(--muted);font-size:14px;margin:0 0 16px}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs id="defs">
+<marker id="ara" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acc)"/></marker>
+<marker id="argood" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--good)"/></marker>
+<marker id="arbad" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--bad)"/></marker>
+<marker id="arm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker>
+</defs></svg>
+<main><p class="hint">Topic 2 · bcrypt in Python — concept slides to look at before the walkthrough</p>
+
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="1 · bcrypt works with bytes">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">1 · bcrypt works with bytes</text>
+<text x="40" y="86" class="sub" text-anchor="start">Text (str) goes in one end; bcrypt wants bytes. Encode first.</text>
+<rect x="40" y="150" width="220" height="80" rx="12" class="b bad"/><text x="150.0" y="184.45" class="tm" text-anchor="middle" style="font-size:17px">&quot;hunter2&quot;</text><text x="150.0" y="207.45" class="tm" text-anchor="middle" style="font-size:17px">str</text><line x1="265" y1="190" x2="350" y2="190" class="ln a" marker-end="url(#ara)"/><rect x="355" y="150" width="250" height="80" rx="12" class="b acc"/><text x="480.0" y="184.45" class="tm" text-anchor="middle" style="font-size:17px">.encode(</text><text x="480.0" y="207.45" class="tm" text-anchor="middle" style="font-size:17px">&quot;utf-8&quot;)</text><line x1="610" y1="190" x2="695" y2="190" class="ln a" marker-end="url(#ara)"/><rect x="700" y="150" width="220" height="80" rx="12" class="b good"/><text x="810.0" y="184.45" class="tm" text-anchor="middle" style="font-size:17px">b&#x27;hunter2&#x27;</text><text x="810.0" y="207.45" class="tm" text-anchor="middle" style="font-size:17px">bytes</text><rect x="40" y="290" width="880" height="170" rx="12" class="b n"/><text x="480.0" y="382.0" class="t" text-anchor="middle"></text><text x="60" y="325" class="t bold" text-anchor="start">bcrypt only accepts bytes</text><text x="60" y="360" class="tm" text-anchor="start">bcrypt.hashpw(&quot;hunter2&quot;, salt)</text><text x="60" y="392" class="tm" text-anchor="start" style="font-size:14px">TypeError: argument &#x27;password&#x27;: &#x27;str&#x27; object cannot be converted to &#x27;PyBytes&#x27;</text><circle cx="76" cy="430" r="20" class="b good"/><path d="M67 430L74 438L86 422" class="ln good"/><text x="110" y="436" class="tm" text-anchor="start">bcrypt.hashpw(&quot;hunter2&quot;.encode(&quot;utf-8&quot;), salt)</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">1 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="2 · gensalt() + hashpw(): anatomy of a hash">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">2 · gensalt() + hashpw(): anatomy of a hash</text>
+<text x="40" y="86" class="sub" text-anchor="start">Hash the password with a fresh random salt; the salt travels inside the result.</text>
+<text x="40" y="135" class="t" text-anchor="start">one bcrypt hash is one string — and the salt is already inside it</text><rect x="40" y="160" width="110" height="80" rx="12" class="b acc"/><text x="95.0" y="207.0" class="tm" text-anchor="middle" style="font-size:20px">$2b$</text><rect x="155" y="160" width="90" height="80" rx="12" class="b warn"/><text x="200.0" y="207.0" class="tm" text-anchor="middle" style="font-size:20px">12$</text><rect x="250" y="160" width="330" height="80" rx="12" class="b good"/><text x="415.0" y="205.95" class="tm" text-anchor="middle" style="font-size:17px">N9qo8uLOickgx2ZMRZoMye</text><rect x="585" y="160" width="335" height="80" rx="12" class="b n"/><text x="752.5" y="204.9" class="tm" text-anchor="middle" style="font-size:14px">IjZAgcfl7p92ldGxad68LJZdL17lhWy</text><text x="95" y="275" class="cap" text-anchor="middle">algorithm</text><text x="200" y="275" class="cap" text-anchor="middle">cost</text><text x="415" y="275" class="cap" text-anchor="middle">salt (22 chars, random)</text><text x="752" y="275" class="cap" text-anchor="middle">the actual hash (31 chars)</text><rect x="40" y="330" width="880" height="160" rx="12" class="b n"/><text x="480.0" y="417.0" class="t" text-anchor="middle"></text><text x="60" y="365" class="lbl" text-anchor="start">How the code reads</text><text x="60" y="400" class="tm" text-anchor="start" style="font-size:16px">salt   = bcrypt.gensalt()                    # fresh random salt every call</text><text x="60" y="430" class="tm" text-anchor="start" style="font-size:16px">hashed = bcrypt.hashpw(password_bytes, salt)  # salt + password → one string</text><text x="60" y="470" class="t bold g" text-anchor="start" style="font-size:18px">Store `hashed` only. No separate salt column to lose.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">2 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="3 · checkpw(): verify without decrypting">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">3 · checkpw(): verify without decrypting</text>
+<text x="40" y="86" class="sub" text-anchor="start">Re-derive the salt, re-hash the attempt, compare.</text>
+<rect x="40" y="130" width="200" height="70" rx="12" class="b n"/><text x="140.0" y="159.6" class="tm" text-anchor="middle" style="font-size:16px">login attempt</text><text x="140.0" y="181.6" class="tm" text-anchor="middle" style="font-size:16px">&quot;hunter2&quot;</text><rect x="40" y="330" width="200" height="90" rx="12" class="b n"/><text x="140.0" y="369.75" class="tm" text-anchor="middle" style="font-size:15px">stored hash</text><text x="140.0" y="390.75" class="tm" text-anchor="middle" style="font-size:15px">$2b$12$N9qo8u…</text><line x1="245" y1="165" x2="330" y2="245" class="ln a" marker-end="url(#ara)"/><line x1="245" y1="375" x2="330" y2="290" class="ln a" marker-end="url(#ara)"/><rect x="335" y="215" width="270" height="100" rx="12" class="b acc"/><text x="470.0" y="248.6" class="t" text-anchor="middle" style="font-size:16px">checkpw()</text><text x="470.0" y="270.6" class="t" text-anchor="middle" style="font-size:16px">1 read salt from stored hash</text><text x="470.0" y="292.6" class="t" text-anchor="middle" style="font-size:16px">2 re-hash the attempt</text><line x1="610" y1="265" x2="690" y2="265" class="ln a" marker-end="url(#ara)"/><rect x="695" y="225" width="225" height="80" rx="12" class="b warn"/><text x="807.5" y="271.3" class="t" text-anchor="middle" style="font-size:18px">new hash == stored?</text><line x1="805" y1="310" x2="740" y2="380" class="ln good" marker-end="url(#argood)"/><line x1="805" y1="310" x2="870" y2="380" class="ln bad" marker-end="url(#arbad)"/><rect x="640" y="385" width="160" height="60" rx="12" class="b good"/><text x="720.0" y="422.0" class="t" text-anchor="middle" style="font-size:20px">True → in</text><rect x="810" y="385" width="110" height="60" rx="12" class="b bad"/><text x="865.0" y="422.0" class="t" text-anchor="middle" style="font-size:20px">False</text><text x="40" y="490" class="t bold" text-anchor="start">Never decrypts anything — it hashes the guess again and compares.</text><text x="40" y="515" class="cap" text-anchor="start" style="font-size:15px">Argument order matters: checkpw(password, hashed)</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">3 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="4 · The cost factor: slow on purpose">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">4 · The cost factor: slow on purpose</text>
+<text x="40" y="86" class="sub" text-anchor="start">Higher cost = exponentially more work per guess. Too high and real users wait too.</text>
+<text x="40" y="125" class="lbl" text-anchor="start">relative time per hash (each +1 cost ≈ doubles the work)</text><text x="40" y="179" class="t bold" text-anchor="start">cost 8</text><rect x="150" y="145" width="29.375" height="46" rx="8" class="b n"/><text x="193.375" y="177" class="t" text-anchor="start">×1</text><text x="40" y="241" class="t bold" text-anchor="start">cost 10</text><rect x="150" y="207" width="57.5" height="46" rx="8" class="b n"/><text x="221.5" y="239" class="t" text-anchor="start">×4</text><text x="40" y="303" class="t bold" text-anchor="start">cost 12</text><rect x="150" y="269" width="170.0" height="46" rx="8" class="b good"/><text x="334.0" y="301" class="t" text-anchor="start">×16   ← sensible default</text><text x="40" y="365" class="t bold" text-anchor="start">cost 14</text><rect x="150" y="331" width="620.0" height="46" rx="8" class="b warn"/><text x="784.0" y="363" class="t" text-anchor="start">×64</text><rect x="40" y="405" width="880" height="90" rx="12" class="b n"/><text x="480.0" y="457.0" class="t" text-anchor="middle"></text><text x="60" y="438" class="t" text-anchor="start">For you:   one login ≈ a fraction of a second — unnoticeable.</text><text x="60" y="470" class="t bold g" text-anchor="start">For an attacker:   billions of guesses × that delay ≈ years. Slow is the feature.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">4 / 4</text>
+</svg>
+</section>
+</main></body></html>

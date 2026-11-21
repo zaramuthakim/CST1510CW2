@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Topic 1 · Why Hash, Not Encrypt</title>
+<style>
+:root{--bg:#f1f3f7;--card:#fff;--ink:#1c2230;--muted:#5d667a;--line:#9aa3b5;
+--nfill:#eef1f7;--nstroke:#aab3c5;--acc:#2563eb;--accf:#dbe7ff;
+--good:#15803d;--goodf:#dcf5e3;--bad:#c62828;--badf:#fde3e3;--warn:#b45309;--warnf:#fdecc8;}
+@media (prefers-color-scheme:dark){:root{--bg:#0f131b;--card:#181e2a;--ink:#e8ecf4;--muted:#9aa5bb;--line:#6b768d;
+--nfill:#222a3a;--nstroke:#44506a;--acc:#6ea0ff;--accf:#1d2f58;
+--good:#4ade80;--goodf:#143524;--bad:#ff7b7b;--badf:#431c1c;--warn:#fbbf24;--warnf:#43330f;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 48px}
+.slide{background:var(--card);border:1px solid var(--nstroke);border-radius:16px;margin:0 0 24px;padding:8px;
+box-shadow:0 2px 10px rgba(0,0,0,.06)}
+svg{display:block;width:100%;height:auto}
+.t{font-size:20px;fill:var(--ink)} .tm{font-size:17px;fill:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace}
+.h{font-size:32px;font-weight:700;fill:var(--ink)} .sub{font-size:19px;fill:var(--muted)}
+.cap{font-size:16px;fill:var(--muted)} .lbl{font-size:15px;font-weight:700;fill:var(--muted);letter-spacing:.06em}
+.b{stroke-width:2} .n{fill:var(--nfill);stroke:var(--nstroke)} .acc{fill:var(--accf);stroke:var(--acc)}
+.good{fill:var(--goodf);stroke:var(--good)} .bad{fill:var(--badf);stroke:var(--bad)} .warn{fill:var(--warnf);stroke:var(--warn)}
+.ln{fill:none;stroke-width:3;stroke-linecap:round} .ln.a{stroke:var(--acc)} .ln.good{stroke:var(--good)} .ln.bad{stroke:var(--bad)} .ln.m{stroke:var(--line)}
+.g{fill:var(--good)} .r{fill:var(--bad)} .w{fill:var(--warn)} .ac{fill:var(--acc)} .bold{font-weight:700}
+.hint{text-align:center;color:var(--muted);font-size:14px;margin:0 0 16px}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs id="defs">
+<marker id="ara" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--acc)"/></marker>
+<marker id="argood" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--good)"/></marker>
+<marker id="arbad" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--bad)"/></marker>
+<marker id="arm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--line)"/></marker>
+</defs></svg>
+<main><p class="hint">Topic 1 · Why Hash, Not Encrypt — concept slides to look at before the walkthrough</p>
+
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="1 · Hashing is a one-way fingerprint">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">1 · Hashing is a one-way fingerprint</text>
+<text x="40" y="86" class="sub" text-anchor="start">Easy to compute forwards. Impossible to run backwards.</text>
+<rect x="50" y="200" width="180" height="90" rx="12" class="b n"/><text x="140.0" y="252.0" class="tm" text-anchor="middle">&quot;hello&quot;</text><line x1="235" y1="245" x2="335" y2="245" class="ln a" marker-end="url(#ara)"/><rect x="340" y="185" width="200" height="120" rx="12" class="b acc"/><text x="440.0" y="239.0" class="t" text-anchor="middle">SHA-256</text><text x="440.0" y="265.0" class="t" text-anchor="middle">hash function</text><line x1="545" y1="245" x2="600" y2="245" class="ln a" marker-end="url(#ara)"/><rect x="605" y="200" width="330" height="90" rx="12" class="b n"/><text x="770.0" y="239.75" class="tm" text-anchor="middle" style="font-size:15px">2cf24dba5fb0a30e26e83b2ac5b9e29e</text><text x="770.0" y="260.75" class="tm" text-anchor="middle" style="font-size:15px">1b161e5c1fa7425e73043362938b9824</text><path d="M780 300 C780 380 440 380 440 312" class="ln bad" stroke-dasharray="8 8" marker-end="url(#arbad)"/><circle cx="610" cy="372" r="20" class="b bad"/><path d="M601 363L619 381M619 363L601 381" class="ln bad"/><text x="610" y="420" class="t bold r" text-anchor="middle">no way back</text><text x="40" y="455" class="lbl" text-anchor="start">ONE-WAY</text><text x="40" y="480" class="cap" text-anchor="start" style="font-size:14px">no function turns the hash</text><text x="40" y="500" class="cap" text-anchor="start" style="font-size:14px">back into the password</text><text x="340" y="455" class="lbl" text-anchor="start">DETERMINISTIC</text><text x="340" y="480" class="cap" text-anchor="start" style="font-size:14px">same input → same output,</text><text x="340" y="500" class="cap" text-anchor="start" style="font-size:14px">every single time</text><text x="640" y="455" class="lbl" text-anchor="start">FIXED SIZE</text><text x="640" y="480" class="cap" text-anchor="start" style="font-size:14px">always 64 hex characters,</text><text x="640" y="500" class="cap" text-anchor="start" style="font-size:14px">however long the input</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">1 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="2 · The avalanche effect">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">2 · The avalanche effect</text>
+<text x="40" y="86" class="sub" text-anchor="start">Change one character of the input and the whole output changes.</text>
+<rect x="40" y="130" width="200" height="70" rx="12" class="b n"/><text x="140.0" y="172.0" class="tm" text-anchor="middle">&quot;password1&quot;</text><line x1="245" y1="165" x2="330" y2="165" class="ln a" marker-end="url(#ara)"/><rect x="335" y="130" width="130" height="70" rx="12" class="b acc"/><text x="400.0" y="172.0" class="t" text-anchor="middle">SHA-256</text><line x1="470" y1="165" x2="520" y2="165" class="ln a" marker-end="url(#ara)"/><rect x="525" y="120" width="395" height="90" rx="12" class="b n"/><text x="722.5" y="159.75" class="tm" text-anchor="middle" style="font-size:15px">0b14d501a594442a01c6859541bcb3e8</text><text x="722.5" y="180.75" class="tm" text-anchor="middle" style="font-size:15px">164d183d32937b851835442f69d5c94e</text><rect x="40" y="270" width="200" height="70" rx="12" class="b warn"/><text x="140.0" y="312.0" class="tm" text-anchor="middle">&quot;password2&quot;</text><line x1="245" y1="305" x2="330" y2="305" class="ln a" marker-end="url(#ara)"/><rect x="335" y="270" width="130" height="70" rx="12" class="b acc"/><text x="400.0" y="312.0" class="t" text-anchor="middle">SHA-256</text><line x1="470" y1="305" x2="520" y2="305" class="ln a" marker-end="url(#ara)"/><rect x="525" y="260" width="395" height="90" rx="12" class="b n"/><text x="722.5" y="299.75" class="tm" text-anchor="middle" style="font-size:15px">6cf615d5bcaac778352a8f1f3360d23f</text><text x="722.5" y="320.75" class="tm" text-anchor="middle" style="font-size:15px">02f34ec182e259897fd6ce485d7870d4</text><text x="40" y="245" class="t bold w" text-anchor="start">1 character changed ↓</text><rect x="40" y="385" width="880" height="100" rx="12" class="b warn"/><text x="480" y="425" class="t bold" text-anchor="middle" style="font-size:26px">60 of 64 characters are different</text><text x="480" y="460" class="t" text-anchor="middle" style="font-size:18px">There is no “close” hash to search for — a near-miss guess looks nothing like the target.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">2 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="3 · Why hash instead of encrypt?">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">3 · Why hash instead of encrypt?</text>
+<text x="40" y="86" class="sub" text-anchor="start">A password only needs checking — never recovering. So don’t keep a key that could recover it.</text>
+<text x="40" y="130" class="lbl" text-anchor="start">ENCRYPTION — two-way</text><rect x="40" y="145" width="170" height="70" rx="12" class="b n"/><text x="125.0" y="187.0" class="tm" text-anchor="middle">password</text><line x1="215" y1="180" x2="290" y2="180" class="ln a" marker-end="url(#ara)"/><rect x="295" y="145" width="150" height="70" rx="12" class="b warn"/><text x="370.0" y="174.45" class="t" text-anchor="middle" style="font-size:17px">encrypt</text><text x="370.0" y="197.45" class="t" text-anchor="middle" style="font-size:17px">(needs KEY)</text><line x1="450" y1="180" x2="525" y2="180" class="ln a" marker-end="url(#ara)"/><rect x="530" y="145" width="190" height="70" rx="12" class="b n"/><text x="625.0" y="187.0" class="tm" text-anchor="middle">x9#Qf2…</text><path d="M625 220 C625 262 370 262 370 222" class="ln m" marker-end="url(#arm)"/><text x="497" y="285" class="cap" text-anchor="middle">decrypt with the key</text><rect x="750" y="145" width="170" height="70" rx="12" class="b bad"/><text x="835.0" y="174.6" class="t" text-anchor="middle" style="font-size:16px">key stolen?</text><text x="835.0" y="196.6" class="t" text-anchor="middle" style="font-size:16px">all passwords out</text><text x="40" y="340" class="lbl" text-anchor="start">HASHING — one-way</text><rect x="40" y="355" width="170" height="70" rx="12" class="b n"/><text x="125.0" y="397.0" class="tm" text-anchor="middle">password</text><line x1="215" y1="390" x2="290" y2="390" class="ln a" marker-end="url(#ara)"/><rect x="295" y="355" width="150" height="70" rx="12" class="b good"/><text x="370.0" y="384.45" class="t" text-anchor="middle" style="font-size:17px">hash</text><text x="370.0" y="407.45" class="t" text-anchor="middle" style="font-size:17px">(no key)</text><line x1="450" y1="390" x2="525" y2="390" class="ln a" marker-end="url(#ara)"/><rect x="530" y="355" width="190" height="70" rx="12" class="b n"/><text x="625.0" y="397.0" class="tm" text-anchor="middle">a3f1c9…</text><circle cx="625" cy="455" r="20" class="b bad"/><path d="M616 446L634 464M634 446L616 464" class="ln bad"/><text x="670" y="462" class="cap" text-anchor="start">nothing to decrypt</text><rect x="750" y="355" width="170" height="70" rx="12" class="b good"/><text x="835.0" y="395.6" class="t" text-anchor="middle" style="font-size:16px">no key to steal</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">3 / 4</text>
+</svg>
+</section>
+<section class="slide">
+<svg viewBox="0 0 960 540" role="img" aria-label="4 · Rainbow tables and salting">
+<use href="#defs"/>
+<text x="40" y="56" class="h" text-anchor="start">4 · Rainbow tables and salting</text>
+<text x="40" y="86" class="sub" text-anchor="start">Attackers pre-compute hashes of common passwords. A unique salt per user breaks the shortcut.</text>
+<text x="40" y="125" class="lbl" text-anchor="start">RAINBOW TABLE — no salt</text><rect x="40" y="140" width="250" height="160" rx="12" class="b n"/><text x="56" y="168" class="cap" text-anchor="start" style="font-size:15px">pre-computed table</text><text x="56" y="196" class="tm" text-anchor="start" style="font-size:14px">8d969eef… = 123456</text><text x="56" y="224" class="tm" text-anchor="start" style="font-size:14px">5e884898… = password</text><text x="56" y="252" class="tm" text-anchor="start" style="font-size:14px">65e84be3… = qwerty</text><text x="56" y="280" class="tm" text-anchor="start" style="font-size:14px">1c8bfe8f… = letmein</text><rect x="330" y="150" width="200" height="60" rx="12" class="b bad"/><text x="430.0" y="185.25" class="tm" text-anchor="middle" style="font-size:15px">stolen: 5e8848…</text><line x1="430" y1="213" x2="430" y2="245" class="ln bad" marker-end="url(#arbad)"/><rect x="330" y="250" width="200" height="50" rx="12" class="b bad"/><text x="430.0" y="280.95" class="t" text-anchor="middle" style="font-size:17px">lookup → FOUND</text><text x="560" y="195" class="cap" text-anchor="start">Two users with “password”</text><text x="560" y="218" class="cap" text-anchor="start">get the SAME hash.</text><text x="560" y="275" class="t bold r" text-anchor="start">Crack one, crack them all.</text><text x="40" y="345" class="lbl" text-anchor="start">WITH A UNIQUE SALT (what bcrypt does)</text><rect x="40" y="360" width="200" height="60" rx="12" class="b n"/><text x="140.0" y="395.95" class="t" text-anchor="middle" style="font-size:17px">anna + salt A</text><line x1="245" y1="390" x2="300" y2="390" class="ln a" marker-end="url(#ara)"/><rect x="305" y="360" width="230" height="60" rx="12" class="b good"/><text x="420.0" y="395.6" class="tm" text-anchor="middle" style="font-size:16px">$2b$12$kQ8…</text><rect x="40" y="430" width="200" height="60" rx="12" class="b n"/><text x="140.0" y="465.95" class="t" text-anchor="middle" style="font-size:17px">ben  + salt B</text><line x1="245" y1="460" x2="300" y2="460" class="ln a" marker-end="url(#ara)"/><rect x="305" y="430" width="230" height="60" rx="12" class="b good"/><text x="420.0" y="465.6" class="tm" text-anchor="middle" style="font-size:16px">$2b$12$Zp3…</text><text x="570" y="405" class="t bold g" text-anchor="start">Same password, different hashes.</text><text x="570" y="435" class="t" text-anchor="start">Pre-computed table = useless;</text><text x="570" y="462" class="t" text-anchor="start">attacker must start from scratch</text><text x="570" y="487" class="t" text-anchor="start">for every single user.</text>
+<text x="920" y="520" class="sub" text-anchor="end" style="font-size:14px">4 / 4</text>
+</svg>
+</section>
+</main></body></html>
